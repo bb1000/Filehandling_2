@@ -270,6 +270,183 @@ And finally the result is
 >>> print(tot_value)
 -->
 
+---
+
+## A live example
+
+<img src="{{ base }}/img/Laurdan.png" style="width: 125px;"/>
+
+<img src="{{ base }}/img/Laurdan_2.png" style="width: 125px;"/>
+
+This molecule is Laurdan. It is a fluorescent probe - and can therefore be used to investigate lipid bilayers.
+
+By means of quantum chemical software, the evolution of the Gibbs free energy can be calculated in function of e.g. a raising temperature.
+
+<img src="{{ base }}/img/Gaussian_2.png" style="width: 350px;"/>
+
+---
+
+## A live example
+
+See file "Laurdan_0_va.log". Browse through the file, search the word 'Temperature' and see that the file contains information about Gibbs free energies ('Sum of electronic and thermal Free Energies') for T=1, 20, 40,..., 500 K. 
+
+Remark that the file is like a film: the sentences are the same, the values change...
+
+<img src="{{ base }}/img/film_output_log_2.png" style="width: 450px;"/>
+
+<img src="{{ base }}/img/film_output_log_temp_2.png" style="width: 450px;"/>
+
+We need to make a file, which contains for each temperature the absolute Gibbs free energy in Hartree as well as the relative Gibbs free energy (= the difference with the lowest Gibbs free energy in the table) in kcal/mol. 
+
+---
+
+## Live example: reading in file...
+
+```
+>>> import tkinter
+>>> from tkinter.filedialog import askopenfilename
+>>> filename = askopenfilename()
+
+>>> F=open(filename,'r')
+>>> lines = F.readlines()
+>>> F.close()
+
+```
+
+Let us make three lists: one for the temperatures, one for the Gibbs free energies and one for the relative Gibbs free energies. Remark that the first (second, third,...) temperature is connected to the first (second, third,...) Gfe and the first relative Gfe.
+
+---
+
+## Live example: making list of the temperatures
+
+We know that `lines` is a list. Let us therefore first be aware of the tools:
+
+```
+>>> for i in [2,3,4]:
+...     print(i)
+2
+3
+4
+
+```
+
+```
+>>> for i in enumerate([2,3,4]):
+...     print(i)
+(0, 2)
+(1, 3)
+(2, 4)
+
+```
+
+```
+>>> for i,x in enumerate([2,3,4]):
+...     print(i)
+...     print(x)
+0
+2
+1
+3
+2
+4
+
+```
+---
+
+## Live example: making list of the temperatures
+
+```
+>>> Tlist=[]
+
+```
+
+We will try to find the numbers of the lines which have the words 'Temperature', 'Kelvin' and 'Pressure', and navigate then back to them to read in the information...
+
+```
+>>> location1=[i for i,x in enumerate(lines) if ('Temperature' in x) and \
+('Kelvin' in x) and ('Pressure' in x) and ('Atm' in x)]
+
+```
+
+```
+>>> for i in location1:
+...     foundstring=lines[i]
+...     value=float(foundstring.split()[1])
+...     Tlist.append(value)
+
+```
+
+Remark that we take the second entry in the string `foundstring`. This could also be obtained by using
+
+```
+...     searched_words = re.search('Temperature (.+?) Kelvin', foundstring)
+...     svalue = searchvalue.group(1)
+...     value=float(svalue)
+
+```
+
+---
+
+## Live example: making list of the Gibbs free energies
+
+```
+>>> Glist=[]
+>>> location2=[i for i,x in enumerate(lines) if ('Sum of electronic and thermal Free Energies' in x)]
+>>> for i in location2:
+        foundstring=lines[i]
+	value=float(foundstring.split()[7])
+        Glist.append(value)
+	
+```
+
+---
+
+## Live example: making list of the relative Gibbs free energies
+
+The idea is now that we go through the whole list of Glist... Therefore first a bit of insight:
+
+```
+>>> for i in [2,3,4]:
+...     print(i)
+2
+3
+4
+
+```
+
+```
+>>> for i in len([2,3,4]):
+...     print(i)
+TypeError: 'int' object is not iterable
+
+```
+
+```
+>>> for i in range(len([2,3,4])):
+...     print(i)
+0
+1
+2
+
+```
+
+---
+
+## Live example: making list of the relative Gibbs free energies
+
+```
+>>> relativelist=[]
+>>> minvalue=min(x for x in Glist)
+
+```
+
+```
+>>> for i in range(len(Glist)):
+        j=Glist[i]
+	inkcalmol=(j-minvalue)*627.5095
+	relativelist.append(inkcalmol)
+
+```
 
 ---
 
