@@ -274,15 +274,19 @@ And finally the result is
 
 ## A live example
 
+<center>
 <img src="{{ base }}/img/Laurdan.png" style="width: 125px;"/>
 
 <img src="{{ base }}/img/Laurdan_2.png" style="width: 125px;"/>
+</center>
 
 This molecule is Laurdan. It is a fluorescent probe - and can therefore be used to investigate lipid bilayers.
 
 By means of quantum chemical software, the evolution of the Gibbs free energy can be calculated in function of e.g. a raising temperature.
 
+<center>
 <img src="{{ base }}/img/Gaussian_2.png" style="width: 350px;"/>
+</center>
 
 ---
 
@@ -292,9 +296,11 @@ See file "Laurdan_0_va.log". Browse through the file, search the word 'Temperatu
 
 Remark that the file is like a film: the sentences are the same, the values change...
 
+<center>
 <img src="{{ base }}/img/film_output_log_2.png" style="width: 450px;"/>
 
 <img src="{{ base }}/img/film_output_log_temp_2.png" style="width: 450px;"/>
+</center>
 
 We need to make a file, which contains for each temperature the absolute Gibbs free energy in Hartree as well as the relative Gibbs free energy (= the difference with the lowest Gibbs free energy in the table) in kcal/mol. 
 
@@ -442,9 +448,195 @@ TypeError: 'int' object is not iterable
 
 ```
 >>> for i in range(len(Glist)):
-        j=Glist[i]
-	inkcalmol=(j-minvalue)*627.5095
-	relativelist.append(inkcalmol)
+...     j=Glist[i]
+...	inkcalmol=(j-minvalue)*627.5095
+...	relativelist.append(inkcalmol)
+
+```
+---
+
+## Live example: Putting the matrix in the right shape
+
+All data together gives us
+
+```
+>>> alldata=[Tlist,Glist,relativelist]
+
+```
+
+The output of the matrix is however not what we want:
+
+```
+>>> alldata
+[[1.0, 20.0, 40.0,...],[-1065.149362, -1065.151038, -1065.1534,...],
+[81.4544981569478, 80.40279223503488,...]]
+
+```
+
+We would prefer a file with the temperatures in the first column, the Hartree-energies in the second and the relative energies in the third one. Therefore, first an exercise:
+
+```
+>>> numbers= [1,2,3]
+>>> letters= ['a', 'b', 'c']
+>>> ziplist=[numbers,letters]
+>>> print(ziplist)
+[[1, 2, 3], ['a', 'b', 'c']]
+>>> print(*ziplist)
+[1, 2, 3] ['a', 'b', 'c']
+>>> list(zip(*ziplist))
+[(1, 'a'), (2, 'b'), (3, 'c')]
+
+```
+
+---
+
+## Live example: Putting the matrix in the right shape
+
+The only thing we need now is to get rid of the tuples, so that we can access the content... The `map` function might be interesting:
+
+```
+>>> def qua(x):
+...     return x**2
+>>> list(map(qua,[4,5,6]))
+... [16, 25, 36]
+
+```
+
+However, the content of `map` cannot be written out as such - therefore we have to make a list of it before printing.
+
+<!--
+It does not have to be a list, it can also be e.g. a tuple:
+
+tuple(map(qua,[4,5,6]))
+(16, 25, 36)
+-->
+
+```
+>>> list_tup=[(4,5),(6,7)]
+>>> list(map(list,list_tup))
+[[4, 5], [6, 7]]
+
+```
+
+<!--
+>>> tup2=((4,5),(6,7))
+>>> list(map(list,tup2))
+[[4, 5], [6, 7]]
+-->
+
+<!--
+Remark that it is logical that the next thing does not work:
+
+>>> list(map(list,(4,5,6,7)))
+'int' object is not iterable (number '4' cannot be list)
+
+-->
+
+When we apply all these techniques upon 'alldata', we get
+
+```
+>>> ziptransposed=list(map(list,zip(*alldata)))
+>>> ziptransposed
+[[1.0, -1065.149362, 81.4544981569478],
+ [20.0, -1065.151038, 80.40279223503488],
+ [40.0, -1065.1534, 78.92061479606737],
+ [60.0, -1065.156211, 77.15668559152647],
+ ...  
+
+```
+
+---
+
+## Live example: Writing out
+
+We know already
+
+```
+>>> import os
+>>> cwd=os.getcwd()
+>>> newdir=cwd+'/'+'data'
+>>> if not os.path.exists(newdir):
+...    os.makedirs(newdir)
+>>> os.chdir(newdir)
+
+```
+
+```
+>>> outfile="data_molecule"
+>>> Wf=open(outfile,'w')
+
+```
+
+---
+
+## Live example: Writing out
+
+It is a possibility to print out a string, which is built up by all the elements of the matrix 'ziptransposed'. 
+
+By means of an example, consider
+
+```
+>>> matrix_ex=[[1,2,3],[4,5,6]]
+
+```
+
+```
+>>> for x in matrix_ex:
+...     print(x)
+[1, 2, 3]
+[4, 5, 6]
+
+```
+
+```
+>>> for x in matrix_ex:
+...     print(' '.join(str(x[i]) for x in matrix_ex))
+[1, 2, 3] [4, 5, 6]
+[1, 2, 3] [4, 5, 6]
+
+```
+
+```
+>>> for x in matrix_ex:
+...     print(' '.join(str(x[i]) for i in range(len(x))))
+1 2 3
+4 5 6
+
+```
+
+---
+
+## Live example: Writing out
+
+We can now apply the previous to the matrix 'ziptransposed'. However, we should be aware that `print` automatically adds a line break in the end. The function `write` does not do that, therefore we have to add a `write('\n')` extra:
+
+```
+>>> for x in ziptransposed:
+...   Wf.write(' '.join(str(x[i]) for i in range(len(x))))
+...   Wf.write('\n')
+
+```
+
+<!--
+To round the numbers:
+
+>>> for x in ziptransposed:
+...   Wf.write(' '.join(str(round(x[i],3)) for i in range(len(x))))
+...   Wf.write('\n')
+-->
+
+```
+>>> Wf.close
+
+```
+
+```
+$ cd data
+$ cat data_molecule
+1.0 -1065.149362 81.4544981569478
+20.0 -1065.151038 80.40279223503488
+40.0 -1065.1534 78.92061479606737
+...
 
 ```
 

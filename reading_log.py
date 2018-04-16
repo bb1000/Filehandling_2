@@ -6,7 +6,7 @@ import tkinter
 ##from tkinter import filedialog
 from tkinter.filedialog import askopenfilename
 filename = askopenfilename()
-print(filename)
+#print(filename)
 
 F=open(filename,'r')
 lines = F.readlines()
@@ -38,7 +38,7 @@ location2=[i for i,x in enumerate(lines) if ('Sum of electronic and thermal Free
 for i in location2:
     foundstring=lines[i]
     value=float(foundstring.split()[7])
-    print(value)
+#    print(value)
     Glist.append(value)
 
 #Relative G
@@ -80,12 +80,20 @@ ziptransposed=list(map(list,zip(*alldata)))
 
 #writes everything
 
+import os
+cwd=os.getcwd()
+newdir=cwd+'/'+'data'
+if not os.path.exists(newdir):
+    os.makedirs(newdir)
+os.chdir(newdir)
+
 outfile="data_molecule"
 Wf=open(outfile,'w')
 for x in ziptransposed:
-    print(x[0],x[1],x[2])
+#    print(x[0],x[1],x[2])
 #    for i in x:
-    Wf.write(' '.join(str(round(x[i],3)) for i in range(len(x))))
+#    Wf.write(' '.join(str(round(x[i],3)) for i in range(len(x))))
+    Wf.write(' '.join(str(x[i]) for i in range(len(x))))
     Wf.write('\n')
 #Wf.write(' '.join(str(x[i]) for x in ziptransposed))
 #Wf.write('\n'.join(str(x) for x in ziptransposed))
