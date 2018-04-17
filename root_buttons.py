@@ -6,7 +6,6 @@ class App:
     def __init__(self, master):
 
         frame = Frame(master)
-#        frame = tkinter.Tk(master)
         frame.pack()
 
         self.button = Button(
@@ -25,4 +24,4 @@ root = Tk()
 app = App(root)
 
 root.mainloop()
-#root.destroy()
+

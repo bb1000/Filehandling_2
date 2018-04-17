@@ -24,7 +24,17 @@ We make use of the library `tkinter` and its sublibaries. In the next chapter, w
 
 ```
 
-The most basic GUI inside tkinter is just a gray box, commonly denoted `root`, and is defined using the `Tk` sublibrary:
+The most basic GUI inside tkinter is just a gray box, commonly denoted `root`.
+
+<center>
+<img src="{{ base }}/img/root-box_2.png" style="width: 125px;"/>
+</center>
+
+---
+
+## GUI 'Please think while you run'
+
+`root` is defined using the `Tk` sublibrary:
 
 ```
 >>> root= tkinter.Tk()
@@ -46,11 +56,19 @@ Like it is now, the box is open until the end of the program. Since our program 
 Using `Label()`, we are able to give the box a message; with `pack()` the size of the box is adapted to the text...
 
 ```
+>>> root= tkinter.Tk()
 >>> w=Label(root,text="This is a beta version. The program comes without guarantee that the results are correct.")
 >>> w.pack()
 >>> root.mainloop()
 
 ```
+
+Remark that `root= tkinter.Tk()` was needed since we killed the `root` on the previous page (we pressed the cross to close it).
+
+<center>
+<img src="{{ base }}/img/box_with_text_2.png" style="width: 500px;"/>
+</center>
+
 
 ---
 
@@ -65,6 +83,10 @@ With the `filedialog` module and the `askopenfilename`-function, the user can be
 ```
 
 This file can then be used for further data-mining. 
+
+<center>
+<img src="{{ base }}/img/Dialog_choose_file_2.png" style="width: 250px;"/>
+</center>
 
 ---
 
