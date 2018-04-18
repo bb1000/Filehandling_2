@@ -163,7 +163,17 @@ We make use of the library `tkinter` and its sublibaries. In the next chapter, w
 
 ```
 
-The most basic GUI inside tkinter is just a gray box, commonly denoted `root`, and is defined using the `Tk` sublibrary:
+The most basic GUI inside tkinter is just a gray box, commonly denoted `root`.
+
+&lt;center&gt;
+&lt;img src=&#34;/Filehandling_2/img/root-box_2.png&#34; style=&#34;width: 125px;&#34;/&gt;
+&lt;/center&gt;
+
+---
+
+## GUI &#39;Please think while you run&#39;
+
+`root` is defined using the `Tk` sublibrary:
 
 ```
 &gt;&gt;&gt; root= tkinter.Tk()
@@ -185,11 +195,19 @@ Like it is now, the box is open until the end of the program. Since our program 
 Using `Label()`, we are able to give the box a message; with `pack()` the size of the box is adapted to the text...
 
 ```
+&gt;&gt;&gt; root= tkinter.Tk()
 &gt;&gt;&gt; w=Label(root,text=&#34;This is a beta version. The program comes without guarantee that the results are correct.&#34;)
 &gt;&gt;&gt; w.pack()
 &gt;&gt;&gt; root.mainloop()
 
 ```
+
+Remark that `root= tkinter.Tk()` was needed since we killed the `root` on the previous page (we pressed the cross to close it).
+
+&lt;center&gt;
+&lt;img src=&#34;/Filehandling_2/img/box_with_text_2.png&#34; style=&#34;width: 500px;&#34;/&gt;
+&lt;/center&gt;
+
 
 ---
 
@@ -204,6 +222,10 @@ With the `filedialog` module and the `askopenfilename`-function, the user can be
 ```
 
 This file can then be used for further data-mining. 
+
+&lt;center&gt;
+&lt;img src=&#34;/Filehandling_2/img/Dialog_choose_file_2.png&#34; style=&#34;width: 250px;&#34;/&gt;
+&lt;/center&gt;
 
 ---
 
@@ -413,15 +435,19 @@ And finally the result is
 
 ## A live example
 
+&lt;center&gt;
 &lt;img src=&#34;/Filehandling_2/img/Laurdan.png&#34; style=&#34;width: 125px;&#34;/&gt;
 
 &lt;img src=&#34;/Filehandling_2/img/Laurdan_2.png&#34; style=&#34;width: 125px;&#34;/&gt;
+&lt;/center&gt;
 
 This molecule is Laurdan. It is a fluorescent probe - and can therefore be used to investigate lipid bilayers.
 
 By means of quantum chemical software, the evolution of the Gibbs free energy can be calculated in function of e.g. a raising temperature.
 
+&lt;center&gt;
 &lt;img src=&#34;/Filehandling_2/img/Gaussian_2.png&#34; style=&#34;width: 350px;&#34;/&gt;
+&lt;/center&gt;
 
 ---
 
@@ -431,9 +457,11 @@ See file &#34;Laurdan_0_va.log&#34;. Browse through the file, search the word &#
 
 Remark that the file is like a film: the sentences are the same, the values change...
 
+&lt;center&gt;
 &lt;img src=&#34;/Filehandling_2/img/film_output_log_2.png&#34; style=&#34;width: 450px;&#34;/&gt;
 
 &lt;img src=&#34;/Filehandling_2/img/film_output_log_temp_2.png&#34; style=&#34;width: 450px;&#34;/&gt;
+&lt;/center&gt;
 
 We need to make a file, which contains for each temperature the absolute Gibbs free energy in Hartree as well as the relative Gibbs free energy (= the difference with the lowest Gibbs free energy in the table) in kcal/mol. 
 
@@ -518,9 +546,12 @@ We will try to find the numbers of the lines which have the words &#39;Temperatu
 Remark that we take the second entry in the string `foundstring`. This could also be obtained by using
 
 ```
+&gt;&gt;&gt; for i in location1:
+...     foundstring=lines[i]
 ...     searched_words = re.search(&#39;Temperature (.+?) Kelvin&#39;, foundstring)
 ...     svalue = searchvalue.group(1)
 ...     value=float(svalue)
+...     Tlist.append(value)
 
 ```
 
@@ -530,11 +561,12 @@ Remark that we take the second entry in the string `foundstring`. This could als
 
 ```
 &gt;&gt;&gt; Glist=[]
-&gt;&gt;&gt; location2=[i for i,x in enumerate(lines) if (&#39;Sum of electronic and thermal Free Energies&#39; in x)]
+&gt;&gt;&gt; location2=[i for i,x in enumerate(lines) if (&#39;Sum of electronic and thermal \
+Free Energies&#39; in x)]
 &gt;&gt;&gt; for i in location2:
-        foundstring=lines[i]
-	value=float(foundstring.split()[7])
-        Glist.append(value)
+...     foundstring=lines[i]
+...     value=float(foundstring.split()[7])
+...     Glist.append(value)
 	
 ```
 
@@ -573,6 +605,8 @@ TypeError: &#39;int&#39; object is not iterable
 
 ## Live example: making list of the relative Gibbs free energies
 
+We would like to make now a list of the Gibbs free energies with respect to the minimal value in the list. We convert the result to kcal/mol. 
+
 ```
 &gt;&gt;&gt; relativelist=[]
 &gt;&gt;&gt; minvalue=min(x for x in Glist)
@@ -581,9 +615,195 @@ TypeError: &#39;int&#39; object is not iterable
 
 ```
 &gt;&gt;&gt; for i in range(len(Glist)):
-        j=Glist[i]
-	inkcalmol=(j-minvalue)*627.5095
-	relativelist.append(inkcalmol)
+...     j=Glist[i]
+...	inkcalmol=(j-minvalue)*627.5095
+...	relativelist.append(inkcalmol)
+
+```
+---
+
+## Live example: Putting the matrix in the right shape
+
+All data together gives us
+
+```
+&gt;&gt;&gt; alldata=[Tlist,Glist,relativelist]
+
+```
+
+The output of the matrix is however not what we want:
+
+```
+&gt;&gt;&gt; alldata
+[[1.0, 20.0, 40.0,...],[-1065.149362, -1065.151038, -1065.1534,...],
+[81.4544981569478, 80.40279223503488,...]]
+
+```
+
+We would prefer a file with the temperatures in the first column, the Hartree-energies in the second and the relative energies in the third one. Therefore, first an exercise:
+
+```
+&gt;&gt;&gt; numbers= [1,2,3]
+&gt;&gt;&gt; letters= [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]
+&gt;&gt;&gt; ziplist=[numbers,letters]
+&gt;&gt;&gt; print(ziplist)
+[[1, 2, 3], [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]]
+&gt;&gt;&gt; print(*ziplist)
+[1, 2, 3] [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]
+&gt;&gt;&gt; list(zip(*ziplist))
+[(1, &#39;a&#39;), (2, &#39;b&#39;), (3, &#39;c&#39;)]
+
+```
+
+---
+
+## Live example: Putting the matrix in the right shape
+
+The only thing we need now is to get rid of the tuples, so that we can access the content... The `map` function might be interesting:
+
+```
+&gt;&gt;&gt; def qua(x):
+...     return x**2
+&gt;&gt;&gt; list(map(qua,[4,5,6]))
+... [16, 25, 36]
+
+```
+
+However, the content of `map` cannot be written out as such - therefore we have to make a list of it before printing.
+
+&lt;!--
+It does not have to be a list, it can also be e.g. a tuple:
+
+tuple(map(qua,[4,5,6]))
+(16, 25, 36)
+--&gt;
+
+```
+&gt;&gt;&gt; list_tup=[(4,5),(6,7)]
+&gt;&gt;&gt; list(map(list,list_tup))
+[[4, 5], [6, 7]]
+
+```
+
+&lt;!--
+&gt;&gt;&gt; tup2=((4,5),(6,7))
+&gt;&gt;&gt; list(map(list,tup2))
+[[4, 5], [6, 7]]
+--&gt;
+
+&lt;!--
+Remark that it is logical that the next thing does not work:
+
+&gt;&gt;&gt; list(map(list,(4,5,6,7)))
+&#39;int&#39; object is not iterable (number &#39;4&#39; cannot be list)
+
+--&gt;
+
+When we apply all these techniques upon &#39;alldata&#39;, we get
+
+```
+&gt;&gt;&gt; ziptransposed=list(map(list,zip(*alldata)))
+&gt;&gt;&gt; ziptransposed
+[[1.0, -1065.149362, 81.4544981569478],
+ [20.0, -1065.151038, 80.40279223503488],
+ [40.0, -1065.1534, 78.92061479606737],
+ [60.0, -1065.156211, 77.15668559152647],
+ ...  
+
+```
+
+---
+
+## Live example: Writing out
+
+We know already
+
+```
+&gt;&gt;&gt; import os
+&gt;&gt;&gt; cwd=os.getcwd()
+&gt;&gt;&gt; newdir=cwd+&#39;/&#39;+&#39;data&#39;
+&gt;&gt;&gt; if not os.path.exists(newdir):
+...    os.makedirs(newdir)
+&gt;&gt;&gt; os.chdir(newdir)
+
+```
+
+```
+&gt;&gt;&gt; outfile=&#34;data_molecule&#34;
+&gt;&gt;&gt; Wf=open(outfile,&#39;w&#39;)
+
+```
+
+---
+
+## Live example: Writing out
+
+It is a possibility to print out a string, which is built up by all the elements of the matrix &#39;ziptransposed&#39;. 
+
+By means of an example, consider
+
+```
+&gt;&gt;&gt; matrix_ex=[[1,2,3],[4,5,6]]
+
+```
+
+```
+&gt;&gt;&gt; for x in matrix_ex:
+...     print(x)
+[1, 2, 3]
+[4, 5, 6]
+
+```
+
+```
+&gt;&gt;&gt; for x in matrix_ex:
+...     print(&#39; &#39;.join(str(x) for x in matrix_ex))
+[1, 2, 3] [4, 5, 6]
+[1, 2, 3] [4, 5, 6]
+
+```
+
+```
+&gt;&gt;&gt; for x in matrix_ex:
+...     print(&#39; &#39;.join(str(x[i]) for i in range(len(x))))
+1 2 3
+4 5 6
+
+```
+
+---
+
+## Live example: Writing out
+
+We can now apply the previous to the matrix &#39;ziptransposed&#39;. However, we should be aware that `print` automatically adds a line break in the end. The function `write` does not do that, therefore we have to add a `write(&#39;\n&#39;)` extra:
+
+```
+&gt;&gt;&gt; for x in ziptransposed:
+...   Wf.write(&#39; &#39;.join(str(x[i]) for i in range(len(x))))
+...   Wf.write(&#39;\n&#39;)
+
+```
+
+&lt;!--
+To round the numbers:
+
+&gt;&gt;&gt; for x in ziptransposed:
+...   Wf.write(&#39; &#39;.join(str(round(x[i],3)) for i in range(len(x))))
+...   Wf.write(&#39;\n&#39;)
+--&gt;
+
+```
+&gt;&gt;&gt; Wf.close()
+
+```
+
+```
+$ cd data
+$ cat data_molecule
+1.0 -1065.149362 81.4544981569478
+20.0 -1065.151038 80.40279223503488
+40.0 -1065.1534 78.92061479606737
+...
 
 ```
 
