@@ -407,9 +407,12 @@ We will try to find the numbers of the lines which have the words 'Temperature',
 Remark that we take the second entry in the string `foundstring`. This could also be obtained by using
 
 ```
+>>> for i in location1:
+...     foundstring=lines[i]
 ...     searched_words = re.search('Temperature (.+?) Kelvin', foundstring)
 ...     svalue = searchvalue.group(1)
 ...     value=float(svalue)
+...     Tlist.append(value)
 
 ```
 
@@ -419,11 +422,12 @@ Remark that we take the second entry in the string `foundstring`. This could als
 
 ```
 >>> Glist=[]
->>> location2=[i for i,x in enumerate(lines) if ('Sum of electronic and thermal Free Energies' in x)]
+>>> location2=[i for i,x in enumerate(lines) if ('Sum of electronic and thermal \
+Free Energies' in x)]
 >>> for i in location2:
-        foundstring=lines[i]
-	value=float(foundstring.split()[7])
-        Glist.append(value)
+...     foundstring=lines[i]
+...     value=float(foundstring.split()[7])
+...     Glist.append(value)
 	
 ```
 
@@ -461,6 +465,8 @@ TypeError: 'int' object is not iterable
 ---
 
 ## Live example: making list of the relative Gibbs free energies
+
+We would like to make now a list of the Gibbs free energies with respect to the minimal value in the list. We convert the result to kcal/mol. 
 
 ```
 >>> relativelist=[]
@@ -612,7 +618,7 @@ By means of an example, consider
 
 ```
 >>> for x in matrix_ex:
-...     print(' '.join(str(x[i]) for x in matrix_ex))
+...     print(' '.join(str(x) for x in matrix_ex))
 [1, 2, 3] [4, 5, 6]
 [1, 2, 3] [4, 5, 6]
 
@@ -648,7 +654,7 @@ To round the numbers:
 -->
 
 ```
->>> Wf.close
+>>> Wf.close()
 
 ```
 

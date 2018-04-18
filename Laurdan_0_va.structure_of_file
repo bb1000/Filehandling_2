@@ -1,0 +1,9 @@
+Structure of Laurdan_0_va.log:
+
+1) optimization: 'Make sure that the geometry of the molecule is correct')
+2) Calculation of Gibbs free energy (--> is Temperature dependent!)
+at 1 K
+   20 K
+   40 K
+   ...
+   480 K
