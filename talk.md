@@ -6,6 +6,7 @@
 ## 
 
 BB1000 Programming in Python
+
 KTH
 
 ---
@@ -92,90 +93,132 @@ This file can then be used for further data-mining.
 
 ## Directories
 
-Via `os` the operating system interfaces can be reached.
+The operating system interfaces can be reached via the `os` module.
 
+```python
+import os
 ```
->>> import os
 
+---
+
+## Directories
+
+The operating system interfaces can be reached via the `os` module.
+
+```python
+import os
 ```
 
-The folder location can be found via
+The location of the current working directory can be found via
 
+```python
+workdir = os.getcwd()
+print(workdir)
 ```
->>> cwd = os.getcwd()
->>> print(cwd)
+<pre>
 /mnt/disk/python/Filehandling_2
+</pre>
 
+---
+
+## Directories
+
+The operating system interfaces can be reached via the `os` module.
+
+```python
+import os
 ```
 
-An extra folder can be created using `makedirs`.
+The location of the current working directory can be found via
+
+```python
+workdir = os.getcwd()
+print(workdir)
+```
+<pre>
+/mnt/disk/python/Filehandling_2
+</pre>
+
+An extra directory (folder) can be created using `makedirs`.
+
+```python
+datadir = workdir + '/' + 'data'
+os.makedirs(datadir)
+```
+
+---
+
+## Directories
+
+The operating system interfaces can be reached via the `os` module.
+
+```python
+import os
+```
+
+The location of the current working directory can be found via
+
+```python
+workdir = os.getcwd()
+print(workdir)
+```
+<pre>
+/mnt/disk/python/Filehandling_2
+</pre>
+
+An extra directory (folder) can be created using `makedirs`.
+
+```python
+datadir = workdir + '/' + 'data'
+os.makedirs(datadir)
+```
+
+However, an error will appear if the directory already exists. We have to check
+the existance of the directory:
 
 ```
->>> newdir=cwd+'/'+'data'
->>> os.makedirs(newdir)
-
-```
-
-However, an error will appear when the folder already exists.
-
-<!--
->>> os.makedirs(newdir)
-
-FileExistsError                           Traceback (most recent call last)
-<ipython-input-10-0698eb90a7e6> in <module>()
-      1 os.makedirs(newdir)
-	        Cannot rely on checking for EEXIST, since the operating system
-
-FileExistsError: [Errno 17] File exists: '/mnt/disk/AA_PC_Stockholm/Education/Python_programming/2018/lectures/Filehandling_2/data'
-
--->
-
-We have to check therefore upon its existance:
-
-```
->>> if not os.path.exists(newdir):
-...    os.makedirs(newdir)
-
+if not os.path.exists(datadir):
+    os.makedirs(datadir)
 ```
 
 ---
 
 ## Directories 
 
-After creating the directory, we should make sure we put the data there:
+After creating the directory, we write to file `testfile.txt` therein:
 
+```python
+os.chdir(datadir)
+f_test = open('testfile.txt', 'w')
+print('Marie, Maria and Dorothy', file=f_test)
+f_test.close()
 ```
->>> os.chdir(newdir)
->>> try1=open("testfile.txt","w")
->>> print('Pierre, Einstein and Planck', file=try1)
->>> try1.close()
 
+---
+
+## Directories 
+
+After creating the directory, we write to file `testfile.txt` therein:
+
+```python
+os.chdir(datadir)
+f_test = open('testfile.txt', 'w')
+print('Marie, Maria and Dorothy', file=f_test)
+f_test.close()
 ```
 
 We can check now what is the content:
 
 ```
 $ cat testfile.txt
-Pierre, Einstein and Planck
-
-```
-
-A word of precaution here: imagine you run the program a second time. The folder 'data' exists already, we do not create a new one and the program continues... and will overwrite the content of 'testfile.txt'. 
-
-```
->>> os.chdir(newdir)
->>> try1=open("testfile.txt","w")
->>> print('Marie, Maria and Dorothy', file=try1)
->>> try1.close()
-
-$ cat testfile.txt
 Marie, Maria and Dorothy
-
 ```
 
-<!--
-Marie Curie, Maria Goppert-Mayer ('nuclear shell structure', TPA), Dorothy Hodgkin (X-ray of biological structures)
--->
+[Marie Curie](https://en.wikipedia.org/wiki/Marie_Curie)
+
+[Maria Goppert-Mayer](https://en.wikipedia.org/wiki/Maria_Goeppert_Mayer)
+
+[Dorothy Hodgkin](https://en.wikipedia.org/wiki/Dorothy_Hodgkin)
 
 ---
 
@@ -185,112 +228,192 @@ Imagine we have a file 'Collaborators' with content
 
 ```
 $ cat Collaborators
-Maria has 4 fte collaborators.
-Marie has 3.5 fte collaborators.
-Dorothy has 2.2 fte collaborators.
-
+Maria has 4 FTE collaborators.
+Marie has 3.5 FTE collaborators.
+Dorothy has 2.2 FTE collaborators.
 ```
 
-Please calculate the full amount of fte collaborators for the three Noble prize winners.
+Our task is to calculate the full amount of FTE collaborators for the three
+Noble prize winners.
 
-It can be noticed that the structure of the three sentences is the same, we should find a way to only take care of the information in between 'has' and 'fte'.  
+---
 
-First, we have to read in all lines.
+## Searching information in a file
+
+Imagine we have a file 'Collaborators' with content
 
 ```
->>> F=open('Collaborators','r')
->>> lines = F.readlines()
->>> F.close()
+$ cat Collaborators
+Maria has 4 FTE collaborators.
+Marie has 3.5 FTE collaborators.
+Dorothy has 2.2 FTE collaborators.
+```
 
+Our task is to calculate the full amount of FTE collaborators for the three
+Noble prize winners.
+
+Note that the three sentences have the same structures. We should find a way to
+retrieve the information between 'has' and 'FTE'.  
+
+First, we read in all lines.
+
+```python
+f_dat = open('Collaborators', 'r')
+lines = f_dat.readlines()
+f_dat.close()
 ``` 
 
 ---
 
 ## Searching information in a file
 
-With the library `re`, regular expressions can be searched - it can be verified whether they match string patterns in a text. And we initialize the final value...
+Regular expressions are available via the `re` module. They are very useful for
+matching string patterns in a text.
 
-```
->>> import re
->>> tot_value=0
-
-```
-
-We will now search through the content of each of the lines in `lines`. We know `lines` is a list and need therefore to run through the index of it.
-
-`re.search` can scan each line: we search in fact each time three words, of which the middle one is unknown and is replaced by parentheses `()`. It can be any character (`.`) and one or more occurrences of that pattern should be taken into account (`+`).  
-
-```
->>> for i in range(len(lines)):
-...     searched_words= re.search('has (.+) fte', lines[i])
-
-```
-
-<!--
-The 'r' at the start of the pattern string designates a python "raw" string which passes through backslashes without change.
--->
-
----
-
-## Searching information in a file
-
-`searched_words` is an object which contains the three words. If there is a problem with the matching words [e.g. 'has (.+) guf'], then `searched_words` is just `None`. 
-
-<!--
-print(searched_words)
-
-<_sre.SRE_Match object; span=(6, 15), match='has 4 fte'>
-<_sre.SRE_Match object; span=(6, 17), match='has 3.5 fte'>
-<_sre.SRE_Match object; span=(8, 19), match='has 2.2 fte'>
--->
-
-It is therefore possible to build in a check:
-
-```
-...     if searched_words is None:
-...         print('Error in sentence')
-...         exit()
-	 
+```python
+import re
 ```
 
 ---
 
 ## Searching information in a file
 
-The first word in `searched_words` can be accessed by using `searched_words.group(0)`. We are however interested in the second word, and have to render it to a number.
+Regular expressions are available via the `re` module. They are very useful for
+matching string patterns in a text.
 
-```
-...     svalue = searched_words.group(1)
-...     value = float(svalue)
-
-```
-
-We only have to add for each line in `lines` the value to the sum of the previous ones:
-
-```
-...     tot_value = tot_value + value
-
+```python
+import re
 ```
 
-And finally the result is
+With `re.search`, the following code searches three words, of
+which the middle one is unknown.
 
++ `.` matches any character
++ `+` matches one or more occurrences of the pattern before it
++ `()` indicates the start and end of a group
+
+```python
+total_amount = 0.0
+
+for line in lines:
+    match = re.search(r'has (.+) FTE', line)
 ```
->>> print(tot_value)
+
+---
+
+## Searching information in a file
+
+Regular expressions are available via the `re` module. They are very useful for
+matching string patterns in a text.
+
+```python
+import re
+```
+
+With `re.search`, the following code searches three words, of
+which the middle one is unknown.
+
++ `.` matches any character
++ `+` matches one or more occurrences of the pattern before it
++ `()` indicates the start and end of a group
+
+```python
+total_amount = 0.0
+
+for line in lines:
+    match = re.search(r'has (.+) FTE', line)
+```
+
+The 'r' at the start of the pattern string designates a raw string that treats
+backslashes as literal characters.
+
+---
+
+## Searching information in a file
+
+If the string pattern was successfully found, `re.search` returns an object
+that contains the three words. Otherwise `None` will be returned.
+
+It is therefore possible to check the result of the search:
+
+```python
+    if match is None:
+        print('String pattern not found in line: ' + line)
+```
+
+---
+
+## Searching information in a file
+
+If the string pattern was successfully found, `re.search` returns an object
+that contains the three words. Otherwise `None` will be returned.
+
+It is therefore possible to check the result of the search:
+
+```python
+    if match is None:
+        print('String pattern not found in line: ' + line)
+```
+
+The matched group in `match` is accessible via `match.group(1)`. We need to
+turn it into a floating point number and then add it to `total_amount`.
+
+```python
+    string_value = match.group(1)
+    total_amount += float(string_value)
+```
+
+---
+
+## Searching information in a file
+
+Putting together, the code looks like
+
+```python
+import re
+
+total_amount = 0.0
+
+for line in lines:
+    match = re.search(r'has (.+) FTE', line)
+
+    if match is None:
+        print('Information not found!')
+
+    string_value = match.group(1)
+    total_amount += float(string_value)
+
+print(total_amount)
+```
+
+---
+
+## Searching information in a file
+
+Putting together, the code looks like
+
+```python
+import re
+
+total_amount = 0.0
+
+for line in lines:
+    match = re.search(r'has (.+) FTE', line)
+
+    if match is None:
+        print('Information not found!')
+
+    string_value = match.group(1)
+    total_amount += float(string_value)
+
+print(total_amount)
+```
+
+And the result is
+
+<pre>
 9.7
-
-```
-
-<!--
->>> for i in range(len(lines)):
-...    searched_words = re.search('has (.+) fte', lines[i])
-...    if searched_words is None:
-...       print('Error in sentence')
-...       exit()
-...    svalue = searched_words.group(1)
-...    value = float(svalue)
-...    tot_value = tot_value+value
->>> print(tot_value)
--->
+</pre>
 
 ---
 
