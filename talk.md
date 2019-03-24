@@ -420,376 +420,232 @@ And the result is
 ## A live example
 
 <center>
-<img src="{{ base }}/img/Laurdan.png" style="width: 125px;"/>
+<img src="{{ base }}/img/Laurdan.png" style="width: 200px;"/>
 
-<img src="{{ base }}/img/Laurdan_2.png" style="width: 125px;"/>
+<img src="{{ base }}/img/Laurdan_2.png" style="width: 200px;"/>
 </center>
 
-This molecule is Laurdan. It is a fluorescent probe - and can therefore be used to investigate lipid bilayers.
+This molecule is Laurdan. It is a fluorescent probe - and can therefore be used
+to investigate lipid bilayers.
 
-By means of quantum chemical software, the evolution of the Gibbs free energy can be calculated in function of e.g. a raising temperature.
+By means of quantum chemical software, the evolution of the Gibbs free energy
+can be calculated as a function of e.g. a raising temperature.
 
 <center>
-<img src="{{ base }}/img/Gaussian_2.png" style="width: 350px;"/>
+<img src="{{ base }}/img/Gaussian_2.png" style="width: 400px;"/>
 </center>
 
 ---
 
 ## A live example
 
-See file "Laurdan_0_va.log". Browse through the file, search the word 'Temperature' and see that the file contains information about Gibbs free energies ('Sum of electronic and thermal Free Energies') for T=1, 20, 40,..., 500 K. 
+See file "Laurdan\_0\_va.log". We need to
 
-Remark that the file is like a film: the sentences are the same, the values change...
-
-<center>
-<img src="{{ base }}/img/film_output_log_2.png" style="width: 450px;"/>
++ extract the temperatures from the following lines
 
 <img src="{{ base }}/img/film_output_log_temp_2.png" style="width: 450px;"/>
-</center>
 
-We need to make a file, which contains for each temperature the absolute Gibbs free energy in Hartree as well as the relative Gibbs free energy (= the difference with the lowest Gibbs free energy in the table) in kcal/mol. 
++ and extract the total free energies from the following lines
+
+<img src="{{ base }}/img/film_output_log_2.png" style="width: 550px;"/>
 
 ---
 
 ## Live example: reading in file...
 
-```
->>> import tkinter
->>> from tkinter.filedialog import askopenfilename
->>> filename = askopenfilename()
+The following code reads the temperatures into a list
 
->>> F=open(filename,'r')
->>> lines = F.readlines()
->>> F.close()
+```python
+import re
 
-```
+temperatures = []
 
-Let us make three lists: one for the temperatures, one for the Gibbs free energies and one for the relative Gibbs free energies. Remark that the first (second, third,...) temperature is connected to the first (second, third,...) Gfe and the first relative Gfe.
+f_log = open('Laurdan_0_va.log', 'r')
 
----
+for line in f_log:
+    match = re.search(r'Temperature(.+)Kelvin\.', line)
+    if match is not None:
+        temp = float(match.group(1).strip())
+        temperatures.append(temp)
 
-## Live example: making list of the temperatures
+f_log.close()
 
-We know that `lines` is a list. Let us therefore first be aware of the tools:
-
-```
->>> for i in [2,3,4]:
-...     print(i)
-2
-3
-4
-
-```
-
-```
->>> for i in enumerate([2,3,4]):
-...     print(i)
-(0, 2)
-(1, 3)
-(2, 4)
-
-```
-
-```
->>> for i,x in enumerate([2,3,4]):
-...     print(i)
-...     print(x)
-0
-2
-1
-3
-2
-4
-
-```
----
-
-## Live example: making list of the temperatures
-
-```
->>> Tlist=[]
-
-```
-
-We will try to find the numbers of the lines which have the words 'Temperature', 'Kelvin' and 'Pressure', and navigate then back to them to read in the information...
-
-```
->>> location1=[i for i,x in enumerate(lines) if ('Temperature' in x) and \
-('Kelvin' in x) and ('Pressure' in x) and ('Atm' in x)]
-
-```
-
-```
->>> for i in location1:
-...     foundstring=lines[i]
-...     value=float(foundstring.split()[1])
-...     Tlist.append(value)
-
-```
-
-Remark that we take the second entry in the string `foundstring`. This could also be obtained by using
-
-```
->>> for i in location1:
-...     foundstring=lines[i]
-...     searched_words = re.search('Temperature (.+?) Kelvin', foundstring)
-...     svalue = searchvalue.group(1)
-...     value=float(svalue)
-...     Tlist.append(value)
-
+print(temperatures)
 ```
 
 ---
 
-## Live example: making list of the Gibbs free energies
+## Live example: reading in file...
 
-```
->>> Glist=[]
->>> location2=[i for i,x in enumerate(lines) if ('Sum of electronic and thermal \
-Free Energies' in x)]
->>> for i in location2:
-...     foundstring=lines[i]
-...     value=float(foundstring.split()[7])
-...     Glist.append(value)
-	
-```
+The following code reads both the temperatures and the free energies
 
----
+```python
+import re
 
-## Live example: making list of the relative Gibbs free energies
+temperatures = []
+free_energies = []
 
-The idea is now that we go through the whole list of Glist... Therefore first a bit of insight:
+f_log = open('Laurdan_0_va.log', 'r')
 
-```
->>> for i in [2,3,4]:
-...     print(i)
-2
-3
-4
+for line in f_log:
 
-```
+    match = re.search(r'Temperature(.+)Kelvin\.', line)
+    if match is not None:
+        temp = float(match.group(1).strip())
+        temperatures.append(temp)
 
-```
->>> for i in len([2,3,4]):
-...     print(i)
-TypeError: 'int' object is not iterable
+    match = re.search(r'Sum of electronic and thermal Free Energies=(.+)', line)
+    if match is not None:
+        free_e = float(match.group(1).strip())
+        free_energies.append(free_e)
 
-```
+f_log.close()
 
-```
->>> for i in range(len([2,3,4])):
-...     print(i)
-0
-1
-2
-
+print(temperatures)
+print(free_energies)
 ```
 
 ---
 
-## Live example: making list of the relative Gibbs free energies
+## Live example: relative Gibbs free energies
 
-We would like to make now a list of the Gibbs free energies with respect to the minimal value in the list. We convert the result to kcal/mol. 
+In the log file, the default unit for energy is atomic unit, which is
+equivalanet to 2625.5 kJ/mol.
 
-```
->>> relativelist=[]
->>> minvalue=min(x for x in Glist)
+It makes sense to convert the absolute free energies into relative free
+energies (with respect to the minimal value in the list).
 
-```
+```python
+minimal_free_e = min(free_energies)
 
-```
->>> for i in range(len(Glist)):
-...     j=Glist[i]
-...	inkcalmol=(j-minvalue)*627.5095
-...	relativelist.append(inkcalmol)
+relative_free_energies = []
+for free_e in free_energies:
+    relative_free_energies.append(2625.5 * (free_e - minimal_free_e))
 
-```
----
-
-## Live example: Putting the matrix in the right shape
-
-All data together gives us
-
-```
->>> alldata=[Tlist,Glist,relativelist]
-
-```
-
-The output of the matrix is however not what we want:
-
-```
->>> alldata
-[[1.0, 20.0, 40.0,...],[-1065.149362, -1065.151038, -1065.1534,...],
-[81.4544981569478, 80.40279223503488,...]]
-
-```
-
-We would prefer a file with the temperatures in the first column, the Hartree-energies in the second and the relative energies in the third one. Therefore, first an exercise:
-
-```
->>> numbers= [1,2,3]
->>> letters= ['a', 'b', 'c']
->>> ziplist=[numbers,letters]
->>> print(ziplist)
-[[1, 2, 3], ['a', 'b', 'c']]
->>> print(*ziplist)
-[1, 2, 3] ['a', 'b', 'c']
->>> list(zip(*ziplist))
-[(1, 'a'), (2, 'b'), (3, 'c')]
-
+print(relative_free_energies)
 ```
 
 ---
 
-## Live example: Putting the matrix in the right shape
+## Live example: relative Gibbs free energies
 
-The only thing we need now is to get rid of the tuples, so that we can access the content... The `map` function might be interesting:
+In the log file, the default unit for energy is atomic unit, which is
+equivalanet to 2625.5 kJ/mol.
 
-```
->>> def qua(x):
-...     return x**2
->>> list(map(qua,[4,5,6]))
-... [16, 25, 36]
+It makes sense to convert the absolute free energies into relative free
+energies (with respect to the minimal value in the list).
 
-```
+```python
+minimal_free_e = min(free_energies)
 
-However, the content of `map` cannot be written out as such - therefore we have to make a list of it before printing.
+relative_free_energies = []
+for free_e in free_energies:
+    relative_free_energies.append(2625.5 * (free_e - minimal_free_e))
 
-<!--
-It does not have to be a list, it can also be e.g. a tuple:
-
-tuple(map(qua,[4,5,6]))
-(16, 25, 36)
--->
-
-```
->>> list_tup=[(4,5),(6,7)]
->>> list(map(list,list_tup))
-[[4, 5], [6, 7]]
-
+print(relative_free_energies)
 ```
 
-<!--
->>> tup2=((4,5),(6,7))
->>> list(map(list,tup2))
-[[4, 5], [6, 7]]
--->
+It is convenient to plot the temperature - free energy curve in Jupyter
+notebook
 
-<!--
-Remark that it is logical that the next thing does not work:
+```python
+%matplotlib inline
 
->>> list(map(list,(4,5,6,7)))
-'int' object is not iterable (number '4' cannot be list)
-
--->
-
-When we apply all these techniques upon 'alldata', we get
-
-```
->>> ziptransposed=list(map(list,zip(*alldata)))
->>> ziptransposed
-[[1.0, -1065.149362, 81.4544981569478],
- [20.0, -1065.151038, 80.40279223503488],
- [40.0, -1065.1534, 78.92061479606737],
- [60.0, -1065.156211, 77.15668559152647],
- ...  
-
+import matplotlib.pyplot as plt
+plt.plot(temperatures, relative_free_energies, marker='o')
+plt.xlabel('Temperature / [K]')
+plt.ylabel('Relative free energy [kJ/mol]')
 ```
 
 ---
 
-## Live example: Writing out
+## Live example: writing to file
 
-We know already
+We can save the data in a file for future use
 
-```
->>> import os
->>> cwd=os.getcwd()
->>> newdir=cwd+'/'+'data'
->>> if not os.path.exists(newdir):
-...    os.makedirs(newdir)
->>> os.chdir(newdir)
+```python
+import os
 
-```
+datadir = os.getcwd() + '/' + 'data'
+if not os.path.exists(datadir):
+    os.makedirs(datadir)
 
-```
->>> outfile="data_molecule"
->>> Wf=open(outfile,'w')
+datafile = datadir + '/' + 'data_molecule'
+f_dat = open(datafile, 'w')
 
-```
+for T, E, rel_E in zip(temperatures, free_energies, relative_free_energies):
+    f_dat.write("{} {} {}\n".format(T, E, rel_E))
 
----
-
-## Live example: Writing out
-
-It is a possibility to print out a string, which is built up by all the elements of the matrix 'ziptransposed'. 
-
-By means of an example, consider
-
-```
->>> matrix_ex=[[1,2,3],[4,5,6]]
-
-```
-
-```
->>> for x in matrix_ex:
-...     print(x)
-[1, 2, 3]
-[4, 5, 6]
-
-```
-
-```
->>> for x in matrix_ex:
-...     print(' '.join(str(x) for x in matrix_ex))
-[1, 2, 3] [4, 5, 6]
-[1, 2, 3] [4, 5, 6]
-
-```
-
-```
->>> for x in matrix_ex:
-...     print(' '.join(str(x[i]) for i in range(len(x))))
-1 2 3
-4 5 6
-
+f_dat.close()
 ```
 
 ---
 
-## Live example: Writing out
+## Live example: writing to file
 
-We can now apply the previous to the matrix 'ziptransposed'. However, we should be aware that `print` automatically adds a line break in the end. The function `write` does not do that, therefore we have to add a `write('\n')` extra:
+We can save the data in a file for future use
 
-```
->>> for x in ziptransposed:
-...   Wf.write(' '.join(str(x[i]) for i in range(len(x))))
-...   Wf.write('\n')
+```python
+import os
 
-```
+datadir = os.getcwd() + '/' + 'data'
+if not os.path.exists(datadir):
+    os.makedirs(datadir)
 
-<!--
-To round the numbers:
+datafile = datadir + '/' + 'data_molecule'
+f_dat = open(datafile, 'w')
 
->>> for x in ziptransposed:
-...   Wf.write(' '.join(str(round(x[i],3)) for i in range(len(x))))
-...   Wf.write('\n')
--->
+for T, E, rel_E in zip(temperatures, free_energies, relative_free_energies):
+    f_dat.write("{} {} {}\n".format(T, E, rel_E))
 
-```
->>> Wf.close()
-
+f_dat.close()
 ```
 
+After writing, the content of the file is
+
 ```
-$ cd data
-$ cat data_molecule
-1.0 -1065.149362 81.4544981569478
-20.0 -1065.151038 80.40279223503488
-40.0 -1065.1534 78.92061479606737
+$ cat data/data_molecule
+1.0 -1065.149362 340.8056529997816
+20.0 -1065.151038 336.40531500014595
+40.0 -1065.1534 330.20388400028185
 ...
-
 ```
+
+---
+
+## Live example: numpy array
+
+We can also play with the data using [numpy](http://www.numpy.org/) array.
+
+```python
+import numpy as np
+
+mydata = [temperatures, free_energies, relative_free_energies]
+myarray = np.array(mydata)
+print(myarray.T)
+```
+
+---
+
+## Live example: numpy array
+
+We can also play with the data using [numpy](http://www.numpy.org/) array.
+
+```python
+import numpy as np
+
+mydata = [temperatures, free_energies, relative_free_energies]
+myarray = np.array(mydata)
+print(myarray.T)
+```
+
+<pre>
+[[ 1.00000000e+00 -1.06514936e+03  3.40805653e+02]
+ [ 2.00000000e+01 -1.06515104e+03  3.36405315e+02]
+ [ 4.00000000e+01 -1.06515340e+03  3.30203884e+02]
+ ...
+ [ 4.80000000e+02 -1.06527917e+03  0.00000000e+00]]
+</pre>
 
 ---
 
@@ -802,4 +658,3 @@ http://effbot.org/tkinterbook/tkinter-hello-tkinter.htm
 "Python for Informatics", Charles Severance, 2013, http://www.pythonlearn.com/book.php#python-for-informatics
 
 http://www.pythonforbeginners.com
-
