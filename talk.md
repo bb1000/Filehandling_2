@@ -214,6 +214,26 @@ $ cat testfile.txt
 Marie, Maria and Dorothy
 ```
 
+---
+
+## Directories 
+
+After creating the directory, we write to file `testfile.txt` therein:
+
+```python
+os.chdir(datadir)
+f_test = open('testfile.txt', 'w')
+print('Marie, Maria and Dorothy', file=f_test)
+f_test.close()
+```
+
+We can check now what is the content:
+
+```
+$ cat testfile.txt
+Marie, Maria and Dorothy
+```
+
 [Marie Curie](https://en.wikipedia.org/wiki/Marie_Curie)
 
 [Maria Goppert-Mayer](https://en.wikipedia.org/wiki/Maria_Goeppert_Mayer)
@@ -234,7 +254,7 @@ Dorothy has 2.2 FTE collaborators.
 ```
 
 Our task is to calculate the full amount of FTE collaborators for the three
-Noble prize winners.
+Nobel Laureates.
 
 ---
 
@@ -250,7 +270,7 @@ Dorothy has 2.2 FTE collaborators.
 ```
 
 Our task is to calculate the full amount of FTE collaborators for the three
-Noble prize winners.
+Nobel Laureates.
 
 Note that the three sentences have the same structures. We should find a way to
 retrieve the information between 'has' and 'FTE'.  
