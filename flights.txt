@@ -1,0 +1,15 @@
+Stockholm Paris 5
+Stockholm Frankfurt 8
+Stockholm Amsterdam 8
+
+Gothenburg Paris 3
+Gothenburg Frankfurt 5
+Gothenburg Amsterdam 6
+
+Paris NewYork 8
+Frankfurt NewYork 4
+Amsterdam NewYork 6
+
+Paris Boston 2
+Frankfurt Boston 1
+Amsterdam Boston 2

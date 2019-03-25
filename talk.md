@@ -603,6 +603,382 @@ print(myarray.T)
 
 ---
 
+## Example: connection flights
+
+Suppose we have a file containing the number of flights between cities
+
+```
+$ cat flights.txt
+Stockholm Paris 5
+Stockholm Frankfurt 8
+Stockholm Amsterdam 8
+
+Gothenburg Paris 3
+Gothenburg Frankfurt 5
+Gothenburg Amsterdam 6
+
+Paris NewYork 8
+Frankfurt NewYork 4
+Amsterdam NewYork 6
+
+Paris Boston 2
+Frankfurt Boston 1
+Amsterdam Boston 2
+```
+
+---
+
+## Example: connection flights
+
+Suppose we have a file containing the number of flights between cities
+
+```
+$ cat flights.txt
+Stockholm Paris 5
+Stockholm Frankfurt 8
+Stockholm Amsterdam 8
+
+Gothenburg Paris 3
+Gothenburg Frankfurt 5
+Gothenburg Amsterdam 6
+
+Paris NewYork 8
+Frankfurt NewYork 4
+Amsterdam NewYork 6
+
+Paris Boston 2
+Frankfurt Boston 1
+Amsterdam Boston 2
+```
+
+The first task is to print the following output
+
+<pre>
+               Frankfurt       Paris   Amsterdam
+Stockholm              8           5           8
+Gothenburg             5           3           6
+</pre>
+
+---
+
+## Example: connection flights
+
+The target output is in a tabulated format, and it is convenient to use
+numpy array to store the data.
+
+```python
+import numpy as np
+
+departure = {'Stockholm': 0, 'Gothenburg': 1}
+arrival = {'Frankfurt': 0, 'Paris': 1, 'Amsterdam': 2}
+
+flight_matrix = np.zeros((len(departure), len(arrival)), dtype=np.int32)
+```
+
+---
+
+## Example: connection flights
+
+The target output is in a tabulated format, and it is convenient to use
+numpy array to store the data.
+
+```python
+import numpy as np
+
+departure = {'Stockholm': 0, 'Gothenburg': 1}
+arrival = {'Frankfurt': 0, 'Paris': 1, 'Amsterdam': 2}
+
+flight_matrix = np.zeros((len(departure), len(arrival)), dtype=np.int32)
+```
+
+```python
+f_txt = open('flights.txt', 'r')
+
+for line in f_txt:
+    
+    content = line.split()
+    if len(content) < 3:
+        continue
+        
+    city_a, city_b, num_flights = content[0], content[1], int(content[2])
+    
+    if city_a in departure and city_b in arrival:
+        index_a = departure[city_a]
+        index_b = arrival[city_b]
+        flight_matrix[index_a, index_b] = num_flights
+        
+f_txt.close()
+```
+
+---
+
+## Example: connection flights
+
+We can print the header line first
+
+```python
+print('{:<12s}'.format(''), end='')
+
+for city in arrival:
+    print('{:>12s}'.format(city), end='')
+
+print('')
+```
+
+---
+
+## Example: connection flights
+
+We can print the header line first
+
+```python
+print('{:<12s}'.format(''), end='')
+
+for city in arrival:
+    print('{:>12s}'.format(city), end='')
+
+print('')
+```
+
+<pre>
+               Frankfurt       Paris   Amsterdam
+</pre>
+
+---
+
+## Example: connection flights
+
+We can print the header line first
+
+```python
+print('{:<12s}'.format(''), end='')
+
+for city in arrival:
+    print('{:>12s}'.format(city), end='')
+
+print('')
+```
+
+<pre>
+               Frankfurt       Paris   Amsterdam
+</pre>
+
+```python
+for city_a in departure:
+    print('{:<12s}'.format(city_a), end='')
+
+    for city_b in arrival:
+        index_a = departure[city_a]
+        index_b = arrival[city_b]
+        num_flights = flight_matrix[index_a, index_b]
+        print('{:>12d}'.format(num_flights), end='')
+
+    print('')
+```
+
+---
+
+## Example: connection flights
+
+We can print the header line first
+
+```python
+print('{:<12s}'.format(''), end='')
+
+for city in arrival:
+    print('{:>12s}'.format(city), end='')
+
+print('')
+```
+
+<pre>
+               Frankfurt       Paris   Amsterdam
+</pre>
+
+```python
+for city_a in departure:
+    print('{:<12s}'.format(city_a), end='')
+
+    for city_b in arrival:
+        index_a = departure[city_a]
+        index_b = arrival[city_b]
+        num_flights = flight_matrix[index_a, index_b]
+        print('{:>12d}'.format(num_flights), end='')
+
+    print('')
+```
+
+<pre>
+Stockholm              8           5           8
+Gothenburg             5           3           6
+</pre>
+
+---
+
+## Example: connection flights
+
+Now we have printed out the following information
+
+<pre>
+               Frankfurt       Paris   Amsterdam
+Stockholm              8           5           8
+Gothenburg             5           3           6
+</pre>
+
+---
+
+## Example: connection flights
+
+Now we have printed out the following information
+
+<pre>
+               Frankfurt       Paris   Amsterdam
+Stockholm              8           5           8
+Gothenburg             5           3           6
+</pre>
+
+With minor changes in the code, we can further print out the following
+
+<pre>
+                 NewYork      Boston
+Frankfurt              4           1
+Paris                  8           2
+Amsterdam              6           2
+</pre>
+
+---
+
+## Example: connection flights
+
+Now we have printed out the following information
+
+<pre>
+               Frankfurt       Paris   Amsterdam
+Stockholm              8           5           8
+Gothenburg             5           3           6
+</pre>
+
+With minor changes in the code, we can further print out the following
+
+<pre>
+                 NewYork      Boston
+Frankfurt              4           1
+Paris                  8           2
+Amsterdam              6           2
+</pre>
+
+New task: print out the connection matrix between Stockholm/Gothenburg and
+New York/Boston (via transfer in Frankfurt/Paris/Amsterdam).
+
+---
+
+## Example: connection flights
+
+Now we have printed out the following information
+
+<pre>
+               Frankfurt       Paris   Amsterdam
+Stockholm              8           5           8
+Gothenburg             5           3           6
+</pre>
+
+With minor changes in the code, we can further print out the following
+
+<pre>
+                 NewYork      Boston
+Frankfurt              4           1
+Paris                  8           2
+Amsterdam              6           2
+</pre>
+
+New task: print out the connection matrix between Stockholm/Gothenburg and
+New York/Boston (via transfer in Frankfurt/Paris/Amsterdam).
+
+Expected output:
+
+<pre>
+                 NewYork      Boston
+Stockholm            120          34
+Gothenburg            80          23
+</pre>
+
+---
+
+## Example: connection flights
+
+```python
+import numpy as np
+
+departure = {'Stockholm': 0, 'Gothenburg': 1}
+transfer = {'Frankfurt': 0, 'Paris': 1, 'Amsterdam': 2}
+arrival = {'NewYork': 0, 'Boston': 1}
+
+first_flight = np.zeros((len(departure), len(transfer)), dtype=np.int32)
+second_flight = np.zeros((len(transfer), len(arrival)), dtype=np.int32)
+```
+
+---
+
+## Example: connection flights
+
+```python
+f_txt = open('flights.txt', 'r')
+
+for line in f_txt:
+    
+    content = line.split()
+    if len(content) < 3:
+        continue
+        
+    city_a, city_b, num_flights = content[0], content[1], int(content[2])
+    
+    if city_a in departure and city_b in transfer:
+        index_a = departure[city_a]
+        index_b = transfer[city_b]
+        first_flight[index_a, index_b] = num_flights
+        
+    if city_a in transfer and city_b in arrival:
+        index_a = transfer[city_a]
+        index_b = arrival[city_b]
+        second_flight[index_a, index_b] = num_flights
+        
+f_txt.close()
+```
+
+---
+
+## Example: connection flights
+
+```python
+# matrix multiplication
+
+flight_matrix = np.matmul(first_flight, second_flight)
+
+# print header
+
+print('{:<12s}'.format(''), end='')
+
+for city in arrival:
+    print('{:>12s}'.format(city), end='')
+    
+print('')
+
+# print connection matrix
+
+for city_a in departure:
+    print('{:<12s}'.format(city_a), end='')
+    
+    for city_b in arrival:
+        index_a = departure[city_a]
+        index_b = arrival[city_b]
+        num_flights = flight_matrix[index_a, index_b]
+        print('{:>12d}'.format(num_flights), end='')
+        
+    print('')
+```
+
+---
+
 ## References
 
 http://effbot.org/tkinterbook/tkinter-hello-tkinter.htm
