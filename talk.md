@@ -13,81 +13,15 @@ KTH
 
 layout: false
 
-## GUI 'Please think while you run'
+## Learning objectives
 
-Imagine you write a program - and via a pop-up window, you would like to give a message to the user: 'This is a beta version'
++ The `os` module
 
-We make use of the library `tkinter` and its sublibaries. In the next chapter, we will learn that we load libraries via
++ The `re` module and basic regular expression
 
-```
->>> import tkinter
->>> from tkinter import *
++ Extract information from file
 
-```
-
-The most basic GUI inside tkinter is just a gray box, commonly denoted `root`.
-
-<center>
-<img src="{{ base }}/img/root-box_2.png" style="width: 125px;"/>
-</center>
-
----
-
-## GUI 'Please think while you run'
-
-`root` is defined using the `Tk` sublibrary:
-
-```
->>> root= tkinter.Tk()
->>> root
-
-```
-
-Like it is now, the box is open until the end of the program. Since our program only has four lines, the box will close itself immediately and it appears to the human eye that nothing happened. With the option `mainloop`, the box stays visible until we click it to close...
-
-```
->>> root.mainloop()
-
-```
-
----
-
-## GUI 'Please think while you run'
-
-Using `Label()`, we are able to give the box a message; with `pack()` the size of the box is adapted to the text...
-
-```
->>> root= tkinter.Tk()
->>> w=Label(root,text="This is a beta version. The program comes without guarantee that the results are correct.")
->>> w.pack()
->>> root.mainloop()
-
-```
-
-Remark that `root= tkinter.Tk()` was needed since we killed the `root` on the previous page (we pressed the cross to close it).
-
-<center>
-<img src="{{ base }}/img/box_with_text_2.png" style="width: 500px;"/>
-</center>
-
-
----
-
-## Choose the file
-
-With the `filedialog` module and the `askopenfilename`-function, the user can be asked to select a file.
-
-```
->>> from tkinter.filedialog import askopenfilename
->>> filename = askopenfilename()
-
-```
-
-This file can then be used for further data-mining. 
-
-<center>
-<img src="{{ base }}/img/Dialog_choose_file_2.png" style="width: 250px;"/>
-</center>
++ Format output with alignments
 
 ---
 
@@ -116,7 +50,7 @@ workdir = os.getcwd()
 print(workdir)
 ```
 <pre>
-/mnt/disk/python/Filehandling_2
+/mnt/disk/python/Filehandling\_2
 </pre>
 
 ---
@@ -136,7 +70,7 @@ workdir = os.getcwd()
 print(workdir)
 ```
 <pre>
-/mnt/disk/python/Filehandling_2
+/mnt/disk/python/Filehandling\_2
 </pre>
 
 An extra directory (folder) can be created using `makedirs`.
@@ -163,7 +97,7 @@ workdir = os.getcwd()
 print(workdir)
 ```
 <pre>
-/mnt/disk/python/Filehandling_2
+/mnt/disk/python/Filehandling\_2
 </pre>
 
 An extra directory (folder) can be created using `makedirs`.
@@ -678,3 +612,81 @@ http://effbot.org/tkinterbook/tkinter-hello-tkinter.htm
 "Python for Informatics", Charles Severance, 2013, http://www.pythonlearn.com/book.php#python-for-informatics
 
 http://www.pythonforbeginners.com
+
+---
+
+## GUI 'Please think while you run'
+
+Imagine you write a program - and via a pop-up window, you would like to give a message to the user: 'This is a beta version'
+
+We make use of the library `tkinter` and its sublibaries. In the next chapter, we will learn that we load libraries via
+
+```
+>>> import tkinter
+>>> from tkinter import *
+
+```
+
+The most basic GUI inside tkinter is just a gray box, commonly denoted `root`.
+
+<center>
+<img src="{{ base }}/img/root-box_2.png" style="width: 125px;"/>
+</center>
+
+---
+
+## GUI 'Please think while you run'
+
+`root` is defined using the `Tk` sublibrary:
+
+```
+>>> root= tkinter.Tk()
+>>> root
+
+```
+
+Like it is now, the box is open until the end of the program. Since our program only has four lines, the box will close itself immediately and it appears to the human eye that nothing happened. With the option `mainloop`, the box stays visible until we click it to close...
+
+```
+>>> root.mainloop()
+
+```
+
+---
+
+## GUI 'Please think while you run'
+
+Using `Label()`, we are able to give the box a message; with `pack()` the size of the box is adapted to the text...
+
+```
+>>> root= tkinter.Tk()
+>>> w=Label(root,text="This is a beta version. The program comes without guarantee that the results are correct.")
+>>> w.pack()
+>>> root.mainloop()
+
+```
+
+Remark that `root= tkinter.Tk()` was needed since we killed the `root` on the previous page (we pressed the cross to close it).
+
+<center>
+<img src="{{ base }}/img/box_with_text_2.png" style="width: 500px;"/>
+</center>
+
+
+---
+
+## Choose the file
+
+With the `filedialog` module and the `askopenfilename`-function, the user can be asked to select a file.
+
+```
+>>> from tkinter.filedialog import askopenfilename
+>>> filename = askopenfilename()
+
+```
+
+This file can then be used for further data-mining. 
+
+<center>
+<img src="{{ base }}/img/Dialog_choose_file_2.png" style="width: 250px;"/>
+</center>
